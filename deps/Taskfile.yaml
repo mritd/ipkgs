@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  makeself:
+    cmds:
+      - curl -sSL https://raw.githubusercontent.com/megastep/makeself/master/makeself-header.sh -o makeself-header.sh
+      - curl -sSL https://raw.githubusercontent.com/megastep/makeself/master/makeself.sh -o makeself.sh
+      - chmod +x makeself-header.sh makeself.sh
+    status:
+      - test -f makeself-header.sh
+      - test -f makeself.sh

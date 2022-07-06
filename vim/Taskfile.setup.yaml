@@ -1,0 +1,37 @@
+version: '3'
+
+vars:
+  TIMESTAMP:
+    sh: date "+%Y%m%d%H%M%S"
+
+tasks:
+  backup-vimrc:
+    cmds:
+      - mv ~/.vimrc ~/.vimrc-{{.TIMESTAMP}}
+    status:
+      - "[ ! -f ~/.vimrc ]"
+
+  backup-vimrc-plug:
+    cmds:
+      - mv ~/.vimrc_plug ~/.vimrc_plug-{{.TIMESTAMP}}
+    status:
+      - "[ ! -f ~/.vimrc_plug ]"
+
+  backup-vim:
+    cmds:
+      - mv ~/.vim ~/.vim-{{.TIMESTAMP}}
+    status:
+      - "[ ! -d ~/.vim ]"
+
+  copy-files:
+    cmds:
+      - cp vimrc ~/.vimrc
+      - cp vimrc_plug ~/.vimrc_plug
+      - cp -r data ~/.vim
+
+  default:
+    cmds:
+      - task: backup-vimrc
+      - task: backup-vimrc-plug
+      - task: backup-vim
+      - task: copy-files
