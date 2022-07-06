@@ -1,0 +1,44 @@
+version: '3'
+
+vars:
+  TIMESTAMP:
+    sh: date "+%Y%m%d%H%M%S"
+
+tasks:
+  backup:
+    cmds:
+      - |
+        if [[ -d ${HOME}/.zprezto ]]; then
+          mv ${HOME}/.zprezto ${HOME}/.zprezto-{{.TIMESTAMP}}
+        fi
+
+  copy-files:
+    cmds:
+      - cp -r prezto ${HOME}/.zprezto
+      - |
+        for rcfile in zlogin zlogout zpreztorc zprofile zshenv zshrc; do
+          ln -sf ${HOME}/.zprezto/runcoms/${rcfile} ${HOME}/.${rcfile}
+        done
+
+  chsh:
+    cmds:
+      - chsh -s $(grep /zsh$ /etc/shells | tail -1)
+    preconditions:
+      - sh: "command -v zsh &> /dev/null"
+        msg: |
+
+
+          #########################################################
+          ##                                                     ##
+          ## Zsh is not installed, please execute the following  ##
+          ## command to switch SHELL after installation:         ##
+          ##                                                     ##
+          ##   chsh -s $(grep /zsh$ /etc/shells | tail -1)       ##
+          ##                                                     ##
+          #########################################################
+
+  default:
+    cmds:
+      - task: backup
+      - task: copy-files
+      - task: chsh
