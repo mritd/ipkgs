@@ -5,6 +5,12 @@ vars:
     sh: date "+%Y%m%d%H%M%S"
 
 tasks:
+  default:
+    cmds:
+      - task: backup
+      - task: copy-files
+      - task: chsh
+
   backup:
     cmds:
       - |
@@ -36,9 +42,3 @@ tasks:
           ##   chsh -s $(grep /zsh$ /etc/shells | tail -1)       ##
           ##                                                     ##
           #########################################################
-
-  default:
-    cmds:
-      - task: backup
-      - task: copy-files
-      - task: chsh
