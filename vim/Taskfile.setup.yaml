@@ -5,33 +5,20 @@ vars:
     sh: date "+%Y%m%d%H%M%S"
 
 tasks:
-  backup-vimrc:
+  default:
     cmds:
-      - mv ~/.vimrc ~/.vimrc-{{.TIMESTAMP}}
-    status:
-      - "[ ! -f ~/.vimrc ]"
+      - task: backup
+      - task: copy-files
 
-  backup-vimrc-plug:
+  backup:
     cmds:
-      - mv ~/.vimrc_plug ~/.vimrc_plug-{{.TIMESTAMP}}
-    status:
-      - "[ ! -f ~/.vimrc_plug ]"
-
-  backup-vim:
-    cmds:
-      - mv ~/.vim ~/.vim-{{.TIMESTAMP}}
-    status:
-      - "[ ! -d ~/.vim ]"
+      - if [ -f ~/.vimrc ]; then mv ~/.vimrc ~/.vimrc-{{.TIMESTAMP}}; fi
+      - if [ -f ~/.vimrc_plug ]; then mv ~/.vimrc_plug ~/.vimrc_plug-{{.TIMESTAMP}}; fi
+      - if [ -d ~/.vim ]; then mv ~/.vim ~/.vim-{{.TIMESTAMP}}; fi
 
   copy-files:
     cmds:
       - cp vimrc ~/.vimrc
       - cp vimrc_plug ~/.vimrc_plug
-      - cp -r data ~/.vim
+      - cp -r vim ~/.vim
 
-  default:
-    cmds:
-      - task: backup-vimrc
-      - task: backup-vimrc-plug
-      - task: backup-vim
-      - task: copy-files

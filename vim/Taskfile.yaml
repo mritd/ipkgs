@@ -1,71 +1,65 @@
 version: '3'
 
+vars:
+  TARGET: vim
+  DESC: "VIM CONFIG"
+
 includes:
   deps:
     dir: ../deps
     taskfile: ../deps/Taskfile.yaml
 
 tasks:
+  default:
+    cmds:
+      - task: setup-deps
+      - task: download
+      - task: mkpkg
+
   setup-deps:
     cmds:
       - task: deps:makeself
 
-  download-vimrc:
-    dir: data
-    cmds:
-      - curl -sSL https://raw.githubusercontent.com/mritd/init/master/vim/vimrc -o vimrc
-      - curl -sSL https://raw.githubusercontent.com/mritd/init/master/vim/vimrc_plug -o vimrc_plug
-    status:
-      - test -f vimrc
-      - test -f vimrc_plug
-
-  download-plug.vim:
-    dir: data
-    cmds:
-      - curl -sSL https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -o data/autoload/plug.vim --create-dirs
-    status:
-      - test -f vim/autoload/plug.vim
-
-  download-plugins:
-    dir: data
-    cmds:
-      - git clone -q https://github.com/earthly/earthly.vim.git data/plugged/earthly.vim
-      - git clone -q https://github.com/fholgado/minibufexpl.vim.git data/plugged/minibufexpl.vim
-      - git clone -q https://github.com/scrooloose/nerdtree.git data/plugged/nerdtree
-      - git clone -q https://github.com/joshdick/onedark.vim.git data/plugged/onedark.vim
-      - git clone -q https://github.com/vim-airline/vim-airline.git data/plugged/vim-airline
-      - git clone -q https://github.com/terryma/vim-multiple-cursors.git data/plugged/vim-multiple-cursors
-      - git clone -q https://github.com/sheerun/vim-polyglot.git data/plugged/vim-polyglot
-    status:
-      - test -d data/plugged/earthly.vim
-      - test -d data/plugged/minibufexpl.vim
-      - test -d data/plugged/nerdtree
-      - test -d data/plugged/onedark.vim
-      - test -d data/plugged/vim-airline
-      - test -d data/plugged/vim-multiple-cursors
-      - test -d data/plugged/vim-polyglot
-
-  mk-package:
+  mkpkg:
     silent: true
     cmds:
       - cp Taskfile.setup.yaml data/Taskfile.yaml
       - cp ../deps/helper.sh data/helper.sh
-      - ../deps/makeself.sh data vim.run "VIM CONFIG" ./helper.sh > /dev/null
+      - ../deps/makeself.sh data {{.TARGET}}.run "{{.DESC}}" ./helper.sh > /dev/null
     sources:
       - Taskfile.setup.yaml
       - ../deps/helper.sh
     status:
       - test -f data/Taskfile.yaml
-      - test -f vim.run
+      - test -f {{.TARGET}}.run
 
   cleanup:
     cmds:
-      - rm -rf data vim.run helper.sh
+      - rm -rf data {{.TARGET}}.run
 
-  default:
+
+  download:
     cmds:
-      - task: setup-deps
-      - task: download-vimrc
-      - task: download-plug.vim
-      - task: download-plugins
-      - task: mk-package
+      - curl -sSL https://raw.githubusercontent.com/mritd/init/master/vim/vimrc -o data/vimrc --create-dirs
+      - curl -sSL https://raw.githubusercontent.com/mritd/init/master/vim/vimrc_plug -o data/vimrc_plug --create-dirs
+      - curl -sSL https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -o data/vim/autoload/plug.vim --create-dirs
+      - git clone -q https://github.com/earthly/earthly.vim.git data/vim/plugged/earthly.vim
+      - git clone -q https://github.com/fholgado/minibufexpl.vim.git data/vim/plugged/minibufexpl.vim
+      - git clone -q https://github.com/scrooloose/nerdtree.git data/vim/plugged/nerdtree
+      - git clone -q https://github.com/joshdick/onedark.vim.git data/vim/plugged/onedark.vim
+      - git clone -q https://github.com/vim-airline/vim-airline.git data/vim/plugged/vim-airline
+      - git clone -q https://github.com/terryma/vim-multiple-cursors.git data/vim/plugged/vim-multiple-cursors
+      - git clone -q https://github.com/sheerun/vim-polyglot.git data/vim/plugged/vim-polyglot
+    status:
+      - test -f data/vimrc
+      - test -f data/vimrc_plug
+      - test -f data/vim/autoload/plug.vim
+      - test -d data/vim/plugged/earthly.vim
+      - test -d data/vim/plugged/minibufexpl.vim
+      - test -d data/vim/plugged/nerdtree
+      - test -d data/vim/plugged/onedark.vim
+      - test -d data/vim/plugged/vim-airline
+      - test -d data/vim/plugged/vim-multiple-cursors
+      - test -d data/vim/plugged/vim-polyglot
+
+
