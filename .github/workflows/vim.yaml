@@ -1,0 +1,34 @@
+name: vim
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: 'Manually trigger'
+        required: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      PKG_NAME: vim
+      S3_ADDRESS: ${{ secrets.S3_ADDRESS }}
+      S3_ACCESSKEY: ${{ secrets.S3_ACCESSKEY }}
+      S3_SECRETKEY: ${{ secrets.S3_SECRETKEY }}
+      FORCE_COLOR: 1
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Task
+      uses: arduino/setup-task@v1
+    - name: Install minio/mc
+      run: |
+        curl -sSL https://dl.min.io/client/mc/release/linux-amd64/mc > /usr/local/bin/mc
+        chmod +x /usr/local/bin/mc
+        mc alias set genx ${S3_ADDRESS} ${S3_ACCESSKEY} ${S3_SECRETKEY}
+    - name: Build Package
+      run: task
+      working-directory: ${PKG_NAME}
+    - name: Upload to S3
+      run: mc cp ${PKG_NAME}.run genx/shared/ipkgs
