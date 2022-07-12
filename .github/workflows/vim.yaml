@@ -1,4 +1,4 @@
-name: vim
+name: sync
 
 on:
   schedule:
