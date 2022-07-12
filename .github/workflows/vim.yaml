@@ -33,3 +33,4 @@ jobs:
       working-directory: ${{env.PKG_NAME}}
     - name: Upload to S3
       run: mc cp ${PKG_NAME}.run genx/shared/ipkgs
+      working-directory: ${{env.PKG_NAME}}
