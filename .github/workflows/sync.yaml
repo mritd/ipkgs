@@ -14,6 +14,7 @@ env:
   S3_SECRETKEY: ${{ secrets.S3_SECRETKEY }}
   NOTI_TOKEN: ${{ secrets.NOTI_TOKEN }}
   NOTI_ADDRESS: ${{ secrets.NOTI_ADDRESS }}
+  DOWNLOAD_URL: ${{ github.event.inputs.url }}
   FORCE_COLOR: 1
 
 jobs:
@@ -31,8 +32,10 @@ jobs:
     - name: Download
       run: |
         mkdir sync && cd sync
-        wget '${{ github.event.inputs.url }}'
+        wget ${DOWNLOAD_URL}
     - name: Upload to S3
       run: mc cp sync/* genx/shared/temp
     - name: Notification
-      run: curl -H 'X-Auth: ${NOTI_TOKEN}' -X POST -d message="\`${S3_PREFIX}/$(basename ${{ github.event.inputs.url }})\`&markdown=true" ${NOTI_ADDRESS}
+      run: |
+        curl -X POST -H 'X-Auth: ${NOTI_TOKEN}' ${NOTI_ADDRESS} \
+          -d message="\`${S3_PREFIX}/$(basename ${DOWNLOAD_URL})\`&markdown=true"
