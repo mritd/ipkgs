@@ -8,9 +8,12 @@ on:
         required: true
 
 env:
+  S3_PREFIX: ${{ secrets.S3_PREFIX }}
   S3_ADDRESS: ${{ secrets.S3_ADDRESS }}
   S3_ACCESSKEY: ${{ secrets.S3_ACCESSKEY }}
   S3_SECRETKEY: ${{ secrets.S3_SECRETKEY }}
+  NOTI_TOKEN: ${{ secrets.NOTI_TOKEN }}
+  NOTI_ADDRESS: ${{ secrets.NOTI_ADDRESS }}
   FORCE_COLOR: 1
 
 jobs:
@@ -31,3 +34,5 @@ jobs:
         wget '${{ github.event.inputs.url }}'
     - name: Upload to S3
       run: mc cp sync/* genx/shared/temp
+    - name: Notification
+      run: curl -H 'X-Auth: ${NOTI_TOKEN}' -X POST -d message="\`${S3_PREFIX}/$(basename ${{ github.event.inputs.url }})\`&markdown=true" ${NOTI_ADDRESS}
