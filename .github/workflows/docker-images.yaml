@@ -46,4 +46,4 @@ jobs:
     - name: Notification
       run: |
         curl -X POST -H "X-Auth: ${NOTI_TOKEN}" ${NOTI_ADDRESS} \
-          -d message="\`${S3_PREFIX}/${TARBALL_NAME})\`&markdown=true"
+          -d message="Docker Images: \`${S3_PREFIX}/${TARBALL_NAME}\`&markdown=true"
