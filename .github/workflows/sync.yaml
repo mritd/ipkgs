@@ -37,5 +37,5 @@ jobs:
       run: mc cp sync/* genx/shared/temp
     - name: Notification
       run: |
-        curl -X POST -H 'X-Auth: ${NOTI_TOKEN}' ${NOTI_ADDRESS} \
+        curl -X POST -H "X-Auth: ${NOTI_TOKEN}" ${NOTI_ADDRESS} \
           -d message="\`${S3_PREFIX}/$(basename ${DOWNLOAD_URL})\`&markdown=true"
