@@ -15,6 +15,7 @@ env:
   NOTI_TOKEN: ${{ secrets.NOTI_TOKEN }}
   NOTI_ADDRESS: ${{ secrets.NOTI_ADDRESS }}
   DOCKER_IMAGES: ${{ github.event.inputs.images }}
+  TARBALL_NAME: docker_images.${{ github.run_id }}.tar
   FORCE_COLOR: 1
 
 jobs:
@@ -39,10 +40,10 @@ jobs:
         for img in ${images[@]}; do
           docker pull ${img}
         done
-        docker save ${images} > $(date '+%s').tar
+        docker save ${images} > ${TARBALL_NAME}
     - name: Upload to S3
       run: mc cp sync/* genx/shared/temp
     - name: Notification
       run: |
         curl -X POST -H "X-Auth: ${NOTI_TOKEN}" ${NOTI_ADDRESS} \
-          -d message="\`${S3_PREFIX}/$(basename ${DOWNLOAD_URL})\`&markdown=true"
+          -d message="\`${S3_PREFIX}/${TARBALL_NAME})\`&markdown=true"
