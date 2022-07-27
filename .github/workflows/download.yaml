@@ -1,4 +1,4 @@
-name: sync
+name: download
 
 on:
   workflow_dispatch:
