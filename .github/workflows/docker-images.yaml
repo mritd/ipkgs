@@ -40,7 +40,7 @@ jobs:
         for img in ${images[@]}; do
           docker pull ${img}
         done
-        docker save ${images} > ${TARBALL_NAME}
+        docker save $(echo ${DOCKER_IMAGES} | sed 's@,@ @g') > ${TARBALL_NAME}
     - name: Upload to S3
       run: mc cp sync/* genx/shared/temp
     - name: Notification
